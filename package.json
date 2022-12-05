@@ -9,10 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/react-pdf": "^5.7.4",
+    "@types/styled-components": "^5.1.26",
+    "antd": "^5.0.4",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
+    "react-pdf": "^6.2.0",
     "styled-components": "^5.3.6"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 :root {
-  /* font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-family: Ubuntu, Helvetica, Arial, sans-serif;
+  /* font-size: 16px;
   line-height: 24px;
   font-weight: 400; */
 
@@ -9,6 +9,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  /** Colors **/
+
+  --white: #fff;
+  --black: #000;
+  --bg-light-grey: #f4f4f4;
 }
 
 body {

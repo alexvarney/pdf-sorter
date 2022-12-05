@@ -1,23 +1,31 @@
 import { makeAutoObservable } from "mobx";
 import { createContext, useContext } from "react";
 
+export enum Routes {
+  UPLOAD,
+  SORT,
+  RESULTS,
+}
+
 export class RootStore {
-  _testField = "";
+  _route = Routes.UPLOAD;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  get testField() {
-    return this._testField;
+  get route(): Routes {
+    return this._route;
   }
 
-  setTestField(value: string) {
-    this._testField = value;
+  setRoute(value: Routes) {
+    this._route = value;
   }
 }
 
 export const rootStore: RootStore = new RootStore();
+
+(window as any).rootStore = rootStore;
 
 const RootStoreContext = createContext<RootStore>(rootStore);
 export const RootStoreProvider = RootStoreContext.Provider;
