@@ -1,6 +1,6 @@
 import { Button } from "antd";
-import { FileUploader } from "../components/FileUpload";
-import { Header } from "../components/Header";
+import { FileUploader } from "../components/file-upload";
+import { Header } from "../components/_header";
 
 export const UploadView = () => {
   return (
