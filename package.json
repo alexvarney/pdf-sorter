@@ -12,6 +12,8 @@
     "@types/react-pdf": "^5.7.4",
     "@types/styled-components": "^5.1.26",
     "antd": "^5.0.4",
+    "idb-keyval": "^6.2.0",
+    "lodash": "^4.17.21",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",
     "nanoid": "^4.0.0",

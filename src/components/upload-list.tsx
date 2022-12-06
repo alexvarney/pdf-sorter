@@ -1,16 +1,32 @@
 import { Button, Input, List, Modal } from "antd";
-import { useState } from "react";
-import { PDFUpload } from "../utils/types";
+import { observer } from "mobx-react-lite";
+import React, { useState } from "react";
+import { useRootStore } from "../utils/use-root-store";
 import { PDFViewer } from "./pdf-viewer";
 
-export const UploadList = ({ files }: { files: PDFUpload[] }) => {
+export const UploadList = observer(() => {
+  const store = useRootStore();
+  const fileIds = Object.keys(store.metadata);
+
   const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
 
-  const selectedFile = files.find((files) => files.id === selectedFileId);
+  const showFile = (fileId: string) => {
+    store.loadSavedFiles([fileId]);
+    setSelectedFileId(fileId);
+  };
+
+  const selectedFile = store.loadedFiles[selectedFileId ?? ""];
 
   const closeModal = () => setSelectedFileId(null);
 
   console.log(selectedFile, selectedFileId);
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    fileId: string
+  ) => {
+    store.setPdfName(fileId, event.target.value);
+  };
 
   return (
     <>
@@ -29,23 +45,49 @@ export const UploadList = ({ files }: { files: PDFUpload[] }) => {
         // header={<div>Header</div>}
         // footer={<div>Footer</div>}
         bordered
-        dataSource={files}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
-              <Button type="link" onClick={() => setSelectedFileId(item.id)}>
-                View
-              </Button>,
-              <Button type="link" danger>
-                Delete
-              </Button>,
-            ]}
-          >
-            <Input value={item.name}></Input>
-            {/* <span>{item.id}</span> */}
-          </List.Item>
+        dataSource={fileIds}
+        renderItem={(itemId) => (
+          <ListItem
+            itemId={itemId}
+            handleInputChange={handleInputChange}
+            setSelectedFileId={(id) => {
+              if (id) showFile(id);
+            }}
+          />
         )}
       />
     </>
   );
-};
+});
+
+const ListItem = observer(
+  (props: {
+    itemId: string;
+    handleInputChange: (
+      event: React.ChangeEvent<HTMLInputElement>,
+      fileId: string
+    ) => void;
+    setSelectedFileId: (s: string) => void;
+  }) => {
+    const store = useRootStore();
+    const { itemId, handleInputChange, setSelectedFileId } = props;
+    return (
+      <List.Item
+        actions={[
+          <Button type="link" onClick={() => setSelectedFileId(itemId)}>
+            View
+          </Button>,
+          <Button type="link" danger onClick={() => store.deleteFile(itemId)}>
+            Delete
+          </Button>,
+        ]}
+      >
+        <Input
+          onChange={(e) => handleInputChange(e, itemId)}
+          value={store.metadata[itemId]?.name}
+        ></Input>
+        {/* <span>{item.id}</span> */}
+      </List.Item>
+    );
+  }
+);
