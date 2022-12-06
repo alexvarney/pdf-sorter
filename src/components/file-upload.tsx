@@ -1,18 +1,22 @@
 import { Button } from "antd";
-import React, { useState } from "react";
+import { nanoid } from "nanoid";
+import React from "react";
 import { VscFilePdf } from "react-icons/vsc";
 import styled from "styled-components";
-import { PDFViewer } from "./pdf-viewer";
+import { PDFUpload } from "../utils/types";
 
 const DropContainer = styled.div`
-  width: 50vw;
+  width: clamp(250px, 60vw, 768px);
   height: 256px;
-  margin: 0 auto;
+  margin: 0 auto 32px auto;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--bg-light-grey);
-  // border-style: dashed;
+
+  //dashed border
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='rgba(0,0,0,0.15)' stroke-width='3' stroke-dasharray='8%2c 16%2c 8%2c 16' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: 16px;
 `;
 
 const StyledButton = styled(Button)`
@@ -24,43 +28,33 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const StyledPDFContainer = styled(PDFViewer)`
-  border: 1px solid red;
-  margin: 0 auto;
-  overflow: hidden;
-`;
+type UploadHandler = (values: PDFUpload[]) => void;
 
-export const FileUploader = () => {
-  const [fileValues, setFileValues] = useState<Uint8Array[]>();
-
-  console.log("hello from file uploader");
-
+export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
   const handleUpload = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    if (!event.dataTransfer.items) return;
 
-    const files: File[] = [];
-
-    if (event.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
-      [...event.dataTransfer.items].forEach((item, i) => {
-        // If dropped items aren't files, reject them
-        if (item.kind === "file") {
-          const file = item.getAsFile();
-
-          if (file) {
-            files.push(file);
-          }
-
-          console.log(`… file[${i}].name = ${file?.name}`);
-        }
-      });
-    }
+    const files: File[] = [...event.dataTransfer.items]
+      .filter((item) => item.kind === "file")
+      .map((item) => item.getAsFile())
+      .filter((item): item is File => item != null);
 
     const values = await Promise.all(
-      files.map((file) => file.arrayBuffer().then((res) => new Uint8Array(res)))
+      files.map(async (file) => {
+        const arrayBuffer = await file.arrayBuffer();
+        const array = new Uint8Array(arrayBuffer);
+        const id = nanoid();
+
+        return {
+          id,
+          name: file.name,
+          array,
+        };
+      })
     );
 
-    setFileValues(values);
+    onUpload(values);
   };
 
   return (
@@ -73,14 +67,6 @@ export const FileUploader = () => {
           <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
         </StyledButton>
       </DropContainer>
-      <div>
-        {fileValues?.length && (
-          <StyledPDFContainer
-            width={500}
-            data={fileValues[fileValues.length - 1]}
-          />
-        )}
-      </div>
     </>
   );
 };

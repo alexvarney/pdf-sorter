@@ -12,10 +12,9 @@ const HeaderContainer = styled.header`
   grid-template-columns: 1fr auto;
   align-items: end;
   grid-row-gap: 1.5rem;
+  margin-bottom: 3rem;
 
-  margin: 4rem auto 3rem auto;
-
-  width: min(80vw, 1024px);
+  width: 100%;
 
   & > h1 {
     display: block;

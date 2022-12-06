@@ -1,7 +1,8 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components";
-import { Routes, useRootStore } from "./stores/root.store";
+import { Routes } from "./utils/types";
+import { useRootStore } from "./utils/use-root-store";
 import { ResultsView, SortView, UploadView } from "./views";
 
 const HeaderContainer = styled.div`
@@ -18,6 +19,10 @@ const HeaderContainer = styled.div`
   }
 `;
 
+const Layout = styled.div`
+  padding: 64px 128px;
+`;
+
 const StateMap: Record<Routes, React.ElementType> = {
   [Routes.RESULTS]: ResultsView,
   [Routes.SORT]: SortView,
@@ -30,13 +35,19 @@ const App = observer(() => {
   const ViewComponent = StateMap[store.route];
 
   return (
-    <div className="App">
+    <div
+      className="App"
+      onDrop={(e) => e.preventDefault()}
+      onDragOver={(e) => e.preventDefault()}
+    >
       <HeaderContainer>
         <button onClick={() => store.setRoute(Routes.UPLOAD)}>Upload</button>
         <button onClick={() => store.setRoute(Routes.SORT)}>Sort</button>
         <button onClick={() => store.setRoute(Routes.RESULTS)}>Results</button>
       </HeaderContainer>
-      <ViewComponent> </ViewComponent>
+      <Layout>
+        <ViewComponent />
+      </Layout>
     </div>
   );
 });

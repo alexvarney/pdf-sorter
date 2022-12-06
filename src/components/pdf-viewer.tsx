@@ -26,11 +26,7 @@ export const PDFViewer = styled(
 
     return (
       <div style={{ width: `${width}px` }} className={className}>
-        <p>{documentId}</p>
-        <Document
-          file={{ data: data }}
-          onLoadSuccess={(e) => onDocumentLoadSuccess(e)}
-        >
+        <Document file={{ data: data }} onLoadSuccess={onDocumentLoadSuccess}>
           {numPages > 0 ? (
             Array.from({ length: numPages }).map((v, i) => (
               <Page
