@@ -24,6 +24,12 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const StyledPDFContainer = styled(PDFViewer)`
+  border: 1px solid red;
+  margin: 0 auto;
+  overflow: hidden;
+`;
+
 export const FileUploader = () => {
   const [fileValues, setFileValues] = useState<Uint8Array[]>();
 
@@ -67,9 +73,12 @@ export const FileUploader = () => {
           <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
         </StyledButton>
       </DropContainer>
-      <div style={{ height: "200px" }}>
+      <div>
         {fileValues?.length && (
-          <PDFViewer data={fileValues[fileValues.length - 1]} />
+          <StyledPDFContainer
+            width={500}
+            data={fileValues[fileValues.length - 1]}
+          />
         )}
       </div>
     </>

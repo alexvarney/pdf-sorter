@@ -1,27 +1,49 @@
+import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 import { useState } from "react";
-
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
 //@ts-ignore
 import { Document, Page } from "react-pdf/dist/esm/entry.vite";
-import "react-pdf/dist/esm/Page/TextLayer.css";
+import styled from "styled-components";
 
-export const PDFViewer = ({ data }: { data: Uint8Array }) => {
-  const [numPages, setNumPages] = useState(0);
+export const PDFViewer = styled(
+  ({
+    data,
+    className,
+    width,
+  }: {
+    data?: Uint8Array;
+    width: number;
+    className?: string;
+  }) => {
+    const [numPages, setNumPages] = useState(0);
+    const [documentId, setDocumentId] = useState<string | null>(null);
 
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-    console.log("Loaded a file with " + numPages + " pages!");
-    setNumPages(numPages);
+    function onDocumentLoadSuccess(data: PDFDocumentProxy) {
+      setNumPages(data.numPages);
+      setDocumentId(data.fingerprints[0]);
+    }
+
+    return (
+      <div style={{ width: `${width}px` }} className={className}>
+        <p>{documentId}</p>
+        <Document
+          file={{ data: data }}
+          onLoadSuccess={(e) => onDocumentLoadSuccess(e)}
+        >
+          {numPages > 0 ? (
+            Array.from({ length: numPages }).map((v, i) => (
+              <Page
+                key={`${documentId}${i}`}
+                pageNumber={i + 1}
+                width={width}
+              ></Page>
+            ))
+          ) : (
+            <></>
+          )}
+        </Document>
+      </div>
+    );
   }
-
-  console.log(data);
-
-  if (!data) return <></>;
-
-  return (
-    <>
-      <p>Num Pages: {numPages}</p>
-      <Document file={{ data: data }} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={1}></Page>
-      </Document>
-    </>
-  );
-};
+)``;
