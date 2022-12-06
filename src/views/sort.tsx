@@ -1,4 +1,4 @@
-import { Header } from "../components/_header";
+import { Header } from "../components/header";
 
 export const SortView = () => {
   return (

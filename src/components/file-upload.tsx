@@ -2,7 +2,7 @@ import { Button } from "antd";
 import React, { useState } from "react";
 import { VscFilePdf } from "react-icons/vsc";
 import styled from "styled-components";
-import { PDFViewer } from "./PDFViewer";
+import { PDFViewer } from "./pdf-viewer";
 
 const DropContainer = styled.div`
   width: 50vw;
