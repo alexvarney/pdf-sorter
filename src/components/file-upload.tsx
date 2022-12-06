@@ -1,9 +1,9 @@
-import { Button } from "antd";
-import { nanoid } from "nanoid";
-import React from "react";
-import { VscFilePdf } from "react-icons/vsc";
-import styled from "styled-components";
-import { PDFUpload } from "../utils/types";
+import { Button, Upload } from 'antd';
+import { nanoid } from 'nanoid';
+import React from 'react';
+import { VscFilePdf } from 'react-icons/vsc';
+import styled from 'styled-components';
+import { PDFUpload } from '../utils/types';
 
 const DropContainer = styled.div`
   width: clamp(250px, 60vw, 768px);
@@ -31,17 +31,9 @@ const StyledButton = styled(Button)`
 type UploadHandler = (values: PDFUpload[]) => void;
 
 export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
-  const handleUpload = async (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    if (!event.dataTransfer.items) return;
-
-    const files: File[] = [...event.dataTransfer.items]
-      .filter((item) => item.kind === "file")
-      .map((item) => item.getAsFile())
-      .filter((item): item is File => item != null);
-
+  const handleUpload = async (uploadedFiles: File[]) => {
     const values = await Promise.all(
-      files.map(async (file) => {
+      uploadedFiles.map(async file => {
         const arrayBuffer = await file.arrayBuffer();
         const array = new Uint8Array(arrayBuffer);
         const id = nanoid();
@@ -57,15 +49,34 @@ export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
     onUpload(values);
   };
 
+  const handleFileDrag = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (!event.dataTransfer.items) return;
+
+    const files: File[] = [...event.dataTransfer.items]
+      .filter(item => item.kind === 'file')
+      .map(item => item.getAsFile())
+      .filter((item): item is File => item != null);
+
+    handleUpload(files);
+  };
+
   return (
     <>
       <DropContainer
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleUpload}
+        onDragOver={e => e.preventDefault()}
+        onDrop={handleFileDrag}
       >
-        <StyledButton type="dashed">
-          <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
-        </StyledButton>
+        <Upload
+          customRequest={options => handleUpload([options.file as File])}
+          showUploadList={false}
+          multiple={true}
+          accept="application/pdf"
+        >
+          <StyledButton type="dashed">
+            <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
+          </StyledButton>
+        </Upload>
       </DropContainer>
     </>
   );
