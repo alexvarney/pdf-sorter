@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { Button } from "antd";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CandidateCard } from "../components/candidate-card";
@@ -6,6 +7,7 @@ import { Header } from "../components/header";
 import { ResultsList } from "../components/results-list";
 import { PDFUpload } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
+import { CSVLink } from "react-csv"
 
 const ContentWrapper = styled.div`
   display: grid;
@@ -14,6 +16,7 @@ const ContentWrapper = styled.div`
     grid-template-columns: 1.5fr 2fr;
   }
   grid-gap: 2rem;
+
 `;
 
 export const ResultsView = observer(() => {

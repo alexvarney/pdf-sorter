@@ -2,10 +2,30 @@ import { Button, List } from "antd";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
 import { useRootStore } from "../utils/use-root-store";
+import { CSVLink } from "react-csv";
 
 const ResultListWrapper = styled.div`
-  & > .ant-list-item:hover {
-    /* box-shadow: 0 0 4px #53ed6d; */
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  flex-direction: column;
+
+  & > *:first-child {
+    align-self: stretch;
+  }
+
+`;
+
+const StyledButton = styled(Button)`
+  display: grid;
+  //grid-template-rows: 1fr;
+  align-items: right;
+  margin: 1em;
+
+  width: max-content;
+
+  & > span {
+    margin-right: 0.125rem;
   }
 `;
 
@@ -15,6 +35,15 @@ export const ResultsList = observer(
     onSelectItem: (id: string) => void;
     className?: string;
   }) => {
+    const store = useRootStore();
+    const getFormattedData = () => {
+      return props.fileIds.map((id, i) => ({
+        rank: i + 1,
+        name: store.metadata[id].name,
+        id: id,
+      }));
+    };
+
     return (
       <ResultListWrapper className={props.className}>
         <List
@@ -30,6 +59,16 @@ export const ResultsList = observer(
             />
           )}
         />
+
+        <StyledButton type="dashed" name="export-csv-btn">
+          <CSVLink
+            filename={"CoopRankTable.csv"}
+            data={getFormattedData()}
+            className="export-csv"
+          >
+            <span>Export to CSV</span>
+          </CSVLink>
+        </StyledButton>
       </ResultListWrapper>
     );
   }
@@ -58,7 +97,7 @@ const ListItem = observer(
         ]}
         className="ant-list-item"
       >
-        <span>{rank + 1}</span>
+        <span style={{marginRight: '2rem'}}>{rank + 1}</span>
         <span>{item.name}</span>
       </List.Item>
     );
