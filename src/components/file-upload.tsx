@@ -58,7 +58,7 @@ export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
         accept="application/pdf"
       >
         <DropContainer>
-          <StyledButton type="dashed">
+          <StyledButton type="dashed" name="file-upload">
             <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
           </StyledButton>
         </DropContainer>
