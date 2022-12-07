@@ -17,9 +17,9 @@ const DropContainer = styled.div`
   background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='rgba(0,0,0,0.15)' stroke-width='3' stroke-dasharray='8%2c 16%2c 8%2c 16' stroke-dashoffset='3' stroke-linecap='square'/%3e%3c/svg%3e");
   border-radius: 16px;
 
-  & > h6 {
+  & > span {
     font-weight: lighter;
-    margin: 1em;
+    margin: 0.5em;
   }
 `;
 
@@ -67,7 +67,7 @@ export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
           <StyledButton type="dashed" name="file-upload">
             <span>Upload PDFs</span> <VscFilePdf></VscFilePdf>
           </StyledButton>
-          <h6>or drag and drop files here.</h6>
+          <span>or drag and drop files here.</span>
         </DropContainer>
       </Upload>
     </>
