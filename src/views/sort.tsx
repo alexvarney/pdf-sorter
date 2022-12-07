@@ -51,7 +51,7 @@ export const SortView = observer(() => {
       rootStore.provideComparatorResult(didSelectA);
     } else {
       rootStore
-        .sortCandidates(candidates)
+        .sortCandidates()
         .then((res) => rootStore.setFinalSortResult(res));
       setIsSorting(true);
     }

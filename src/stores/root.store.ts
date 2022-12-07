@@ -11,12 +11,9 @@ import {
 } from "../utils/types";
 export class RootStore {
   _route = Routes.UPLOAD;
-
   _metadata: Record<string, PDFMetadata> = {};
   _loadedFiles: Record<string, PDFUpload["array"]> = {};
-
   _queuedComparisons: QueuedComparison[] = [];
-
   _sortResult: string[] | null = null;
 
   constructor() {
@@ -145,7 +142,9 @@ export class RootStore {
     this._queuedComparisons.push(item);
   }
 
-  sortCandidates = async (ids: string[]) => {
+  sortCandidates = async () => {
+    const ids = Object.keys(this.metadata);
+
     console.log("initial", ids);
 
     const comparator = async (a: string, b: string) => {
