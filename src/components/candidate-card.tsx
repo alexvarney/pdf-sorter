@@ -1,5 +1,5 @@
 import useSize from "@react-hook/size";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import styled from "styled-components";
 import { PDFUpload } from "../utils/types";
@@ -38,15 +38,20 @@ const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
 export const CandidateCard = ({
   data,
   isSelected,
+  onClick,
 }: {
   data?: PDFUpload;
   isSelected?: boolean;
+  onClick?: (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }) => {
   const element = useRef(null);
   const [width] = useSize(element);
 
   return (
-    <CandidateCardWrapper isSelected={!!isSelected}>
+    <CandidateCardWrapper
+      isSelected={!!isSelected}
+      onClick={(e) => onClick?.(e)}
+    >
       <div style={{ width: "100%" }} ref={element}>
         {width > 0 && <PDFViewer data={data?.array} width={width} />}
       </div>

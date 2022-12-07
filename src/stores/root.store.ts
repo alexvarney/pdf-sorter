@@ -1,12 +1,23 @@
 import { clear, del, get, getMany, set, setMany } from "idb-keyval";
 import { debounce } from "lodash";
-import { makeAutoObservable, reaction } from "mobx";
-import { METADATA_KEY, PDFMetadata, PDFUpload, Routes } from "../utils/types";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
+import { sortAsync } from "../utils/async-sort";
+import {
+  METADATA_KEY,
+  PDFMetadata,
+  PDFUpload,
+  QueuedComparison,
+  Routes,
+} from "../utils/types";
 export class RootStore {
   _route = Routes.UPLOAD;
 
   _metadata: Record<string, PDFMetadata> = {};
   _loadedFiles: Record<string, PDFUpload["array"]> = {};
+
+  _queuedComparisons: QueuedComparison[] = [];
+
+  _sortResult: string[] | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -77,11 +88,13 @@ export class RootStore {
 
     if (results.length !== ids.length) return;
 
-    this._loadedFiles = ids.reduce((acc, currId, idx) => {
-      acc[currId] = results[idx];
+    runInAction(() => {
+      this._loadedFiles = ids.reduce((acc, currId, idx) => {
+        acc[currId] = results[idx];
 
-      return acc;
-    }, {} as Record<string, Uint8Array>);
+        return acc;
+      }, {} as Record<string, Uint8Array>);
+    });
   }
 
   get loadedFiles() {
@@ -107,6 +120,56 @@ export class RootStore {
   async deleteFile(fileId: string) {
     delete this._metadata[fileId];
     return del(fileId);
+  }
+
+  get currentComparison(): QueuedComparison | undefined {
+    return this._queuedComparisons[0];
+  }
+
+  /**
+   * Provide a comparison for the current queued item.
+   * @param value - Boolean indicating if the first item is preferable to the second.
+   */
+  provideComparatorResult(value: boolean) {
+    if (this.currentComparison) {
+      this.currentComparison?.resolver(value);
+      this._queuedComparisons.shift();
+    } else {
+      console.error(
+        "No values to compare, did you mean to call provideComparisonResult?"
+      );
+    }
+  }
+
+  appendToQueue(item: QueuedComparison) {
+    this._queuedComparisons.push(item);
+  }
+
+  sortCandidates = async (ids: string[]) => {
+    console.log("initial", ids);
+
+    const comparator = async (a: string, b: string) => {
+      const promise = new Promise<boolean>((resolver) => {
+        this.appendToQueue({
+          comparison: [a, b],
+          resolver,
+        });
+      });
+
+      const result = await promise;
+
+      return result;
+    };
+
+    return await sortAsync(ids, comparator);
+  };
+
+  setFinalSortResult(ids: string[]) {
+    this._sortResult = ids;
+  }
+
+  get sortResult() {
+    return this._sortResult;
   }
 }
 
