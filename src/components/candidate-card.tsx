@@ -5,7 +5,7 @@ import { PDFViewer } from "./pdf-viewer";
 const CandidateCardWrapper = styled.div`
   padding: 1em;
   width: 700px;
-  background-color: --blue;
+  background-color: var(--blue);
   & > div {
     height: 640px;
     overflow-y: scroll;
