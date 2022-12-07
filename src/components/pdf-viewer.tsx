@@ -6,6 +6,10 @@ import "react-pdf/dist/esm/Page/TextLayer.css";
 import { Document, Page } from "react-pdf/dist/esm/entry.vite";
 import styled from "styled-components";
 
+const Wrapper = styled.div<{ $width: number }>`
+  width: ${(props) => props.$width}px;
+`;
+
 export const PDFViewer = styled(
   ({
     data,
@@ -25,21 +29,21 @@ export const PDFViewer = styled(
     }
 
     return (
-      <div style={{ width: `${width}px` }} className={className}>
+      <Wrapper $width={width} className={className}>
         <Document file={{ data: data }} onLoadSuccess={onDocumentLoadSuccess}>
           {numPages > 0 ? (
             Array.from({ length: numPages }).map((v, i) => (
               <Page
                 key={`${documentId}${i}`}
-                pageNumber={i + 1}
                 width={width}
+                pageNumber={i + 1}
               ></Page>
             ))
           ) : (
             <></>
           )}
         </Document>
-      </div>
+      </Wrapper>
     );
   }
 )``;

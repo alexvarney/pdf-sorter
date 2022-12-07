@@ -12,6 +12,7 @@
     "test:codegen": "yarn playwright codegen localhost:5173"
   },
   "dependencies": {
+    "@react-hook/size": "^2.1.2",
     "@types/react-pdf": "^5.7.4",
     "@types/styled-components": "^5.1.26",
     "antd": "^5.0.4",
@@ -31,6 +32,7 @@
     "@playwright/test": "^1.28.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
+    "@types/lodash": "^4.14.191",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",

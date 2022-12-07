@@ -20,7 +20,11 @@ const HeaderContainer = styled.div`
 `;
 
 const Layout = styled.div`
-  padding: 64px 128px;
+  padding: 4rem;
+
+  @media (min-width: 768px) {
+    padding: 4rem 8rem;
+  } ;
 `;
 
 const StateMap: Record<Routes, React.ElementType> = {
