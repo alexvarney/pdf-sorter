@@ -102,6 +102,11 @@ const config: PlaywrightTestConfig = {
   //   command: 'npm run start',
   //   port: 3000,
   // },
+  webServer: {
+    command: "yarn dev --port 5173",
+    port: 5173,
+    reuseExistingServer: true,
+  },
 };
 
 export default config;
