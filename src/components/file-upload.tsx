@@ -19,6 +19,7 @@ const DropContainer = styled.div`
 
   & > span {
     font-weight: lighter;
+    font-size: 0.8rem;
     margin: 0.5em;
   }
 `;
@@ -29,7 +30,7 @@ const StyledButton = styled(Button)`
 
   & > span {
     margin-right: 0.125rem;
-  } 
+  }
 `;
 
 type UploadHandler = (values: PDFUpload[]) => void;
