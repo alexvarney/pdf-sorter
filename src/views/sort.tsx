@@ -9,10 +9,12 @@ import { useRootStore } from "../utils/use-root-store";
 const Button = styled(_Button)``;
 
 const SortWrapper = styled.div`
+  flex: 1;
+
   display: grid;
+
   grid-template-columns: 1fr 15% 1fr;
   gap: 32px;
-  align-items: stretch;
 
   & > ${Button} {
     height: 100%;
@@ -56,7 +58,7 @@ export const SortView = observer(() => {
   };
 
   return (
-    <div>
+    <>
       <Header
         title="Sort Files"
         button={[
@@ -91,6 +93,6 @@ export const SortView = observer(() => {
           onClick={() => setSelectedCandidate(pdfB?.id ?? null)}
         />
       </SortWrapper>
-    </div>
+    </>
   );
 });

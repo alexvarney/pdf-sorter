@@ -6,23 +6,20 @@ import { PDFUpload } from "../utils/types";
 import { PDFViewer } from "./pdf-viewer";
 
 const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column;
+  justify-self: stretch;
+  align-self: stretch;
+  overflow: hidden;
+
+  display: grid;
+  height: 100%;
+
+  grid-template-rows: 1fr auto;
+
   padding: 1rem;
-  width: calc(100% - 2rem);
   background-color: ${(props) =>
     props.isSelected ? `var(--blue)` : `var(--bg-light-grey)`};
   border-radius: 6px;
-  overflow: hidden;
 
-  & > div {
-    height: 640px;
-    overflow-y: scroll;
-    /* overflow-x: hidden; */
-    border-radius: 10px;
-    overscroll-behavior: contain;
-  }
   & > span {
     display: flex;
     justify-content: space-between;
@@ -33,6 +30,18 @@ const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
     margin-top: 10px;
     margin-bottom: 0px;
   }
+`;
+
+const OuterPDFWrapper = styled.div`
+  position: relative;
+  height: 100%;
+  overflow-x: scroll;
+`;
+
+const InnerPDFWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
 `;
 
 export const CandidateCard = ({
@@ -54,15 +63,17 @@ export const CandidateCard = ({
       isSelected={!!isSelected}
       onClick={(e) => onClick?.(e)}
     >
-      <div style={{ width: "100%" }} ref={element}>
-        {width > 0 && (
-          <PDFViewer
-            data={data?.array}
-            width={width}
-            enableLinks={!!enableLinks}
-          />
-        )}
-      </div>
+      <OuterPDFWrapper>
+        <InnerPDFWrapper ref={element}>
+          {width > 0 && (
+            <PDFViewer
+              data={data?.array}
+              width={width}
+              enableLinks={!!enableLinks}
+            />
+          )}
+        </InnerPDFWrapper>
+      </OuterPDFWrapper>
       <span>
         {data?.name ?? ""}{" "}
         <AiFillCheckCircle

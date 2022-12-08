@@ -10,6 +10,7 @@ import { PDFUpload, Routes } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
 
 const ContentWrapper = styled.div`
+  flex: 1;
   display: grid;
   grid-template-columns: 1fr;
   @media (min-width: 768px) {
