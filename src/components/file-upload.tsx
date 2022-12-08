@@ -43,11 +43,12 @@ export const FileUploader = ({ onUpload }: { onUpload: UploadHandler }) => {
           .arrayBuffer()
           .then((res) => new Uint8Array(res));
         const extensionRemoveRegex = /(.*)\.[^.]+$/;
-        var fileName = extensionRemoveRegex.exec(file.name)![1];
+        const trimmedName = extensionRemoveRegex.exec(file.name)![1];
 
         return {
           id: nanoid(),
-          name: fileName,
+          name: trimmedName,
+          filename: file.name,
           array,
         };
       })

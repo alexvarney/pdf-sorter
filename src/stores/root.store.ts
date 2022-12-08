@@ -8,7 +8,11 @@ import {
   PDFUpload,
   QueuedComparison,
   Routes,
+  STATE_KEY,
 } from "../utils/types";
+
+type SavedState = Pick<RootStore, "_sortResult" | "_route">;
+
 export class RootStore {
   _route = Routes.UPLOAD;
 
@@ -21,7 +25,24 @@ export class RootStore {
 
   constructor() {
     makeAutoObservable(this);
+
     this.loadMetadata();
+    this.loadState().then((state) => {
+      if (!state) {
+        this.setRoute(Routes.UPLOAD);
+        return;
+      }
+
+      const { _route, _sortResult } = state;
+
+      this.setRoute(_route);
+      this.setSortResult(_sortResult);
+
+      if (_route === Routes.SORT) {
+        this.sortCandidates();
+      }
+    });
+
     this._abortController = new window.AbortController();
 
     reaction(
@@ -32,6 +53,14 @@ export class RootStore {
       },
       () => {
         this.debouncedSave();
+      }
+    );
+
+    reaction(
+      () => [this.route, this.sortResult],
+      () => {
+        console.log("save state");
+        this.saveState();
       }
     );
   }
@@ -74,6 +103,21 @@ export class RootStore {
 
   async saveMetadata() {
     return set(METADATA_KEY, JSON.stringify(this.metadata));
+  }
+
+  async loadState(): Promise<SavedState | null> {
+    const vals = await get(STATE_KEY);
+
+    if (!vals) return null;
+
+    return JSON.parse(vals) as SavedState;
+  }
+
+  async saveState() {
+    await set(
+      STATE_KEY,
+      JSON.stringify({ _route: this._route, _sortResult: this._sortResult })
+    );
   }
 
   debouncedSave = debounce(this.saveMetadata, 500);
@@ -176,7 +220,7 @@ export class RootStore {
 
     try {
       const result = await sortAsync(ids, comparator);
-      this._sortResult = result;
+      this.setSortResult(result);
       this.setRoute(Routes.RESULTS);
     } catch {
       console.log("caught cancel sort");
@@ -185,6 +229,10 @@ export class RootStore {
 
   get sortResult() {
     return this._sortResult;
+  }
+
+  setSortResult(vals: string[] | null) {
+    this._sortResult = vals;
   }
 }
 

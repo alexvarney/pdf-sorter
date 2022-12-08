@@ -3,7 +3,7 @@ import styled from "styled-components";
 interface HeaderProps {
   title: string;
   subtitle?: string;
-  button?: React.ReactNode;
+  button?: React.ReactNode | React.ReactNode[];
   className?: string;
 }
 
@@ -29,11 +29,16 @@ const HeaderContainer = styled.header`
   }
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+`;
+
 export const Header = ({ title, subtitle, button, className }: HeaderProps) => {
   return (
     <HeaderContainer className={className}>
       <h1>{title}</h1>
-      {!!button ? button : <span />}
+      <ButtonContainer>{button ?? ""}</ButtonContainer>
       <p>{subtitle}</p>
     </HeaderContainer>
   );

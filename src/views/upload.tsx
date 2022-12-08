@@ -29,28 +29,26 @@ export const UploadView = observer(() => {
       }}
     >
       <Header
-        title="Upload PDFs"
-        subtitle="Get started by uploading PDFs"
-        button={
-          <div style={{ display: "flex", gap: "1rem" }}>
-            <Button
-              disabled={!isSortable}
-              size="large"
-              danger
-              onClick={() => rootStore.deleteAll()}
-            >
-              Reset
-            </Button>
-            <Button
-              disabled={!isSortable}
-              type="primary"
-              size="large"
-              onClick={() => store.sortCandidates()}
-            >
-              Next
-            </Button>
-          </div>
-        }
+        title="PDF Sorter"
+        subtitle="Get started by selecting files"
+        button={[
+          <Button
+            disabled={!isSortable}
+            size="large"
+            danger
+            onClick={() => rootStore.deleteAll()}
+          >
+            Reset
+          </Button>,
+          <Button
+            disabled={!isSortable}
+            type="primary"
+            size="large"
+            onClick={() => store.sortCandidates()}
+          >
+            Next
+          </Button>,
+        ]}
       ></Header>
       <FileUploader onUpload={appendFiles} />
       <ListContainer>

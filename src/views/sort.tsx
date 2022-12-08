@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CandidateCard } from "../components/candidate-card";
 import { Header } from "../components/header";
+import { Routes } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
-
 const Button = styled(_Button)``;
 
 const SortWrapper = styled.div`
@@ -56,41 +56,41 @@ export const SortView = observer(() => {
   };
 
   return (
-    <>
-      <div>
-        <Header
-          title="Sort Candidates"
-          button={
-            <Button
-              danger
-              type="dashed"
-              size="large"
-              onClick={() => rootStore.sortCandidates()}
-            >
-              Restart
-            </Button>
-          }
-        ></Header>
-
-        <SortWrapper>
-          <CandidateCard
-            data={pdfA}
-            isSelected={!!selectedCandidate && selectedCandidate === pdfA?.id}
-            onClick={() => setSelectedCandidate(pdfA?.id ?? null)}
-          />
+    <div>
+      <Header
+        title="Sort Files"
+        button={[
           <Button
-            disabled={!comparison || !selectedCandidate}
-            onClick={() => handleButtonClick()}
+            type="dashed"
+            size="large"
+            danger
+            onClick={() => rootStore.setRoute(Routes.UPLOAD)}
           >
-            Next
-          </Button>
-          <CandidateCard
-            data={pdfB}
-            isSelected={!!selectedCandidate && selectedCandidate === pdfB?.id}
-            onClick={() => setSelectedCandidate(pdfB?.id ?? null)}
-          />
-        </SortWrapper>
-      </div>
-    </>
+            Restart
+          </Button>,
+        ]}
+      ></Header>
+
+      <SortWrapper>
+        <CandidateCard
+          data={pdfA}
+          isSelected={!!selectedCandidate && selectedCandidate === pdfA?.id}
+          onClick={() => setSelectedCandidate(pdfA?.id ?? null)}
+        />
+        <Button
+          disabled={!comparison || !selectedCandidate}
+          onClick={() => handleButtonClick()}
+          type="primary"
+          ghost
+        >
+          Next
+        </Button>
+        <CandidateCard
+          data={pdfB}
+          isSelected={!!selectedCandidate && selectedCandidate === pdfB?.id}
+          onClick={() => setSelectedCandidate(pdfB?.id ?? null)}
+        />
+      </SortWrapper>
+    </div>
   );
 });
