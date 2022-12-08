@@ -40,6 +40,7 @@ const OuterPDFWrapper = styled.div`
   position: relative;
   height: 100%;
   overflow-x: scroll;
+  overflow-y: scroll;
   overscroll-behavior: contain;
 `;
 
