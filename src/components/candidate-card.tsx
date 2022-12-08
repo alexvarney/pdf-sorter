@@ -5,24 +5,25 @@ import styled from "styled-components";
 import { PDFUpload } from "../utils/types";
 import { PDFViewer } from "./pdf-viewer";
 
-const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column;
+const CandidateCardWrapper = styled.div<{
+  isSelected: boolean;
+  selectable: boolean;
+}>`
+  justify-self: stretch;
+  align-self: stretch;
+  overflow: hidden;
+
+  display: grid;
+  height: 100%;
+
+  grid-template-rows: 1fr auto;
+
   padding: 1rem;
-  width: calc(100% - 2rem);
   background-color: ${(props) =>
     props.isSelected ? `var(--blue)` : `var(--bg-light-grey)`};
   border-radius: 6px;
-  overflow: hidden;
 
-  & > div {
-    height: 640px;
-    overflow-y: scroll;
-    /* overflow-x: hidden; */
-    border-radius: 10px;
-    overscroll-behavior: contain;
-  }
+  cursor: ${(props) => (props.selectable ? "pointer" : "default")};
   & > span {
     display: flex;
     justify-content: space-between;
@@ -35,14 +36,29 @@ const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
   }
 `;
 
+const OuterPDFWrapper = styled.div`
+  position: relative;
+  height: 100%;
+  overflow-x: scroll;
+  overscroll-behavior: contain;
+`;
+
+const InnerPDFWrapper = styled.div`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+
 export const CandidateCard = ({
   data,
   isSelected,
   onClick,
+  enableLinks,
 }: {
   data?: PDFUpload;
   isSelected?: boolean;
   onClick?: (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  enableLinks?: boolean;
 }) => {
   const element = useRef(null);
   const [width] = useSize(element);
@@ -51,10 +67,19 @@ export const CandidateCard = ({
     <CandidateCardWrapper
       isSelected={!!isSelected}
       onClick={(e) => onClick?.(e)}
+      selectable={onClick !== undefined}
     >
-      <div style={{ width: "100%" }} ref={element}>
-        {width > 0 && <PDFViewer data={data?.array} width={width} />}
-      </div>
+      <OuterPDFWrapper>
+        <InnerPDFWrapper ref={element}>
+          {width > 0 && (
+            <PDFViewer
+              data={data?.array}
+              width={width}
+              enableLinks={!!enableLinks}
+            />
+          )}
+        </InnerPDFWrapper>
+      </OuterPDFWrapper>
       <span>
         {data?.name ?? ""}{" "}
         <AiFillCheckCircle

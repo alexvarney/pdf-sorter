@@ -19,8 +19,6 @@ export const UploadList = observer(() => {
 
   const closeModal = () => setSelectedFileId(null);
 
-  console.log(selectedFile, selectedFileId);
-
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     fileId: string
@@ -37,7 +35,7 @@ export const UploadList = observer(() => {
         width={"768px"}
       >
         <div style={{ width: "700px", margin: "0 auto" }}>
-          <PDFViewer data={selectedFile?.array} width={700} />
+          <PDFViewer data={selectedFile?.array} width={700} enableLinks />
         </div>
       </Modal>
       <List

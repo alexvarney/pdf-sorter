@@ -1,8 +1,8 @@
 import { Button, List } from "antd";
 import { observer } from "mobx-react-lite";
+import { CSVLink } from "react-csv";
 import styled from "styled-components";
 import { useRootStore } from "../utils/use-root-store";
-import { CSVLink } from "react-csv";
 
 const ResultListWrapper = styled.div`
   display: flex;
@@ -12,8 +12,8 @@ const ResultListWrapper = styled.div`
 
   & > *:first-child {
     align-self: stretch;
+    overflow-y: scroll;
   }
-
 `;
 
 const StyledButton = styled(Button)`
@@ -29,50 +29,51 @@ const StyledButton = styled(Button)`
   }
 `;
 
-export const ResultsList = observer(
-  (props: {
-    fileIds: string[];
-    onSelectItem: (id: string) => void;
-    className?: string;
-  }) => {
-    const store = useRootStore();
-    const getFormattedData = () => {
-      return props.fileIds.map((id, i) => ({
-        rank: i + 1,
-        name: store.metadata[id].name,
-        id: id,
-      }));
-    };
+export const ResultsList = styled(
+  observer(
+    ({
+      fileIds,
+      onSelectItem,
+      className,
+    }: {
+      fileIds: string[];
+      onSelectItem: (id: string) => void;
+      className?: string;
+    }) => {
+      const store = useRootStore();
+      const getFormattedData = () => {
+        return fileIds.map((id, i) => ({
+          rank: i + 1,
+          ...store.metadata[id],
+        }));
+      };
 
-    return (
-      <ResultListWrapper className={props.className}>
-        <List
-          className="ant-list-item"
-          size="large"
-          bordered
-          dataSource={props.fileIds}
-          renderItem={(itemId, index) => (
-            <ListItem
-              itemId={itemId}
-              rank={index}
-              onSelect={props.onSelectItem}
-            />
-          )}
-        />
+      return (
+        <ResultListWrapper className={className}>
+          <List
+            className="ant-list-item"
+            size="large"
+            bordered
+            dataSource={fileIds}
+            renderItem={(itemId, index) => (
+              <ListItem itemId={itemId} rank={index} onSelect={onSelectItem} />
+            )}
+          />
 
-        <StyledButton type="dashed" name="export-csv-btn">
-          <CSVLink
-            filename={"CoopRankTable.csv"}
-            data={getFormattedData()}
-            className="export-csv"
-          >
-            <span>Export to CSV</span>
-          </CSVLink>
-        </StyledButton>
-      </ResultListWrapper>
-    );
-  }
-);
+          <StyledButton type="dashed" name="export-csv-btn">
+            <CSVLink
+              filename={"SortResult.csv"}
+              data={getFormattedData()}
+              className="export-csv"
+            >
+              <span>Export to CSV</span>
+            </CSVLink>
+          </StyledButton>
+        </ResultListWrapper>
+      );
+    }
+  )
+)``;
 
 const ListItem = observer(
   ({
@@ -87,6 +88,8 @@ const ListItem = observer(
     const store = useRootStore();
     const item = store.metadata[itemId];
 
+    if (!item) return <></>;
+
     return (
       <List.Item
         onClick={() => onSelect(item.id)}
@@ -97,7 +100,7 @@ const ListItem = observer(
         ]}
         className="ant-list-item"
       >
-        <span style={{marginRight: '2rem'}}>{rank + 1}</span>
+        <span style={{ marginRight: "2rem" }}>{rank + 1}</span>
         <span>{item.name}</span>
       </List.Item>
     );

@@ -1,18 +1,30 @@
+import { Button, Popconfirm } from "antd";
 import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CandidateCard } from "../components/candidate-card";
 import { Header } from "../components/header";
 import { ResultsList } from "../components/results-list";
-import { PDFUpload } from "../utils/types";
+import { rootStore } from "../stores/root.store";
+import { PDFUpload, Routes } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
 
 const ContentWrapper = styled.div`
+  flex: 1 1 auto;
   display: grid;
   grid-template-columns: 1fr;
   @media (min-width: 768px) {
     grid-template-columns: 1.5fr 2fr;
   }
+
+  overflow: hidden;
+  justify-items: stretch;
+
+  & > ${ResultsList} {
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
   grid-gap: 2rem;
 `;
 
@@ -29,6 +41,11 @@ export const ResultsView = observer(() => {
     setSelectedId(itemID);
   };
 
+  const onReset = () => {
+    store.deleteAll();
+    store.setRoute(Routes.UPLOAD);
+  };
+
   useEffect(() => {
     if (selectedId) {
       store.loadSavedFiles([selectedId]);
@@ -40,12 +57,26 @@ export const ResultsView = observer(() => {
 
   return (
     <>
-      <div>
-        <Header title="Results" />
-      </div>
+      <Header
+        title="Results"
+        button={[
+          <Button
+            size="large"
+            type="dashed"
+            onClick={() => rootStore.sortCandidates()}
+          >
+            Sort Again
+          </Button>,
+          <Popconfirm title="Are you sure?" onConfirm={onReset}>
+            <Button size="large" type="primary">
+              Start Over
+            </Button>
+          </Popconfirm>,
+        ]}
+      />
       <ContentWrapper>
         <ResultsList fileIds={fileIds} onSelectItem={onSelect} />
-        <CandidateCard data={selectedFile}></CandidateCard>
+        <CandidateCard data={selectedFile} enableLinks></CandidateCard>
       </ContentWrapper>
     </>
   );

@@ -4,15 +4,17 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CandidateCard } from "../components/candidate-card";
 import { Header } from "../components/header";
+import { Routes } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
-
 const Button = styled(_Button)``;
 
 const SortWrapper = styled.div`
+  flex: 1;
+
   display: grid;
+
   grid-template-columns: 1fr 15% 1fr;
   gap: 32px;
-  align-items: stretch;
 
   & > ${Button} {
     height: 100%;
@@ -21,10 +23,8 @@ const SortWrapper = styled.div`
 
 export const SortView = observer(() => {
   const rootStore = useRootStore();
-  const candidates = Object.keys(rootStore.metadata);
   const comparison = rootStore.currentComparison;
 
-  const [isSorting, setIsSorting] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(
     null
   );
@@ -41,46 +41,58 @@ export const SortView = observer(() => {
     }
   }, [rootStore, comparison]);
 
-  const pdfA = rootStore.loadedFiles[comparison?.comparison[0] ?? ""];
-  const pdfB = rootStore.loadedFiles[comparison?.comparison[1] ?? ""];
+  const pdfA = comparison
+    ? rootStore.loadedFiles[comparison.comparison[0]]
+    : undefined;
+  const pdfB = comparison
+    ? rootStore.loadedFiles[comparison.comparison[1]]
+    : undefined;
 
   const handleButtonClick = () => {
-    if (isSorting && !!selectedCandidate) {
+    if (!!selectedCandidate) {
       const didSelectA = selectedCandidate === pdfA?.id;
 
       rootStore.provideComparatorResult(didSelectA);
-    } else {
-      rootStore
-        .sortCandidates(candidates)
-        .then((res) => rootStore.setFinalSortResult(res));
-      setIsSorting(true);
+      setSelectedCandidate(null);
     }
   };
 
   return (
     <>
-      <div>
-        <Header title="Sort Candidates"></Header>
-
-        <SortWrapper>
-          <CandidateCard
-            data={pdfA}
-            isSelected={!!selectedCandidate && selectedCandidate === pdfA?.id}
-            onClick={() => setSelectedCandidate(pdfA?.id ?? null)}
-          />
+      <Header
+        title="Sort Files"
+        button={[
           <Button
-            disabled={isSorting && !comparison}
-            onClick={() => handleButtonClick()}
+            type="dashed"
+            size="large"
+            danger
+            onClick={() => rootStore.setRoute(Routes.UPLOAD)}
           >
-            {isSorting ? "Next" : "Start"}
-          </Button>
-          <CandidateCard
-            data={pdfB}
-            isSelected={!!selectedCandidate && selectedCandidate === pdfB?.id}
-            onClick={() => setSelectedCandidate(pdfB?.id ?? null)}
-          />
-        </SortWrapper>
-      </div>
+            Restart
+          </Button>,
+        ]}
+      ></Header>
+
+      <SortWrapper>
+        <CandidateCard
+          data={pdfA}
+          isSelected={!!selectedCandidate && selectedCandidate === pdfA?.id}
+          onClick={() => setSelectedCandidate(pdfA?.id ?? null)}
+        />
+        <Button
+          disabled={!comparison || !selectedCandidate}
+          onClick={() => handleButtonClick()}
+          type="primary"
+          ghost
+        >
+          Next
+        </Button>
+        <CandidateCard
+          data={pdfB}
+          isSelected={!!selectedCandidate && selectedCandidate === pdfB?.id}
+          onClick={() => setSelectedCandidate(pdfB?.id ?? null)}
+        />
+      </SortWrapper>
     </>
   );
 });
