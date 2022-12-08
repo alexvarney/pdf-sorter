@@ -12,8 +12,7 @@ const Layout = styled.div`
     padding: 4rem 8rem;
   }
 
-  border: 1px solid red;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 `;
