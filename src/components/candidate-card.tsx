@@ -5,7 +5,10 @@ import styled from "styled-components";
 import { PDFUpload } from "../utils/types";
 import { PDFViewer } from "./pdf-viewer";
 
-const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
+const CandidateCardWrapper = styled.div<{
+  isSelected: boolean;
+  selectable: boolean;
+}>`
   justify-self: stretch;
   align-self: stretch;
   overflow: hidden;
@@ -20,6 +23,7 @@ const CandidateCardWrapper = styled.div<{ isSelected: boolean }>`
     props.isSelected ? `var(--blue)` : `var(--bg-light-grey)`};
   border-radius: 6px;
 
+  cursor: ${(props) => (props.selectable ? "pointer" : "default")};
   & > span {
     display: flex;
     justify-content: space-between;
@@ -63,6 +67,7 @@ export const CandidateCard = ({
     <CandidateCardWrapper
       isSelected={!!isSelected}
       onClick={(e) => onClick?.(e)}
+      selectable={onClick !== undefined}
     >
       <OuterPDFWrapper>
         <InnerPDFWrapper ref={element}>
