@@ -1,18 +1,19 @@
 import { observer } from "mobx-react-lite";
 import React from "react";
 import styled from "styled-components";
+import { rootStore } from "./stores/root.store";
 import { Routes } from "./utils/types";
 import { useRootStore } from "./utils/use-root-store";
 import { ResultsView, SortView, UploadView } from "./views";
 
-const Layout = styled.div`
+const Layout = styled.div<{ constrain: boolean }>`
   padding: 4rem;
-  height: 100vh;
 
   @media (min-width: 768px) {
     padding: 4rem 8rem;
   }
 
+  height: ${(props) => (props.constrain ? "100vh" : "auto")};
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -35,7 +36,7 @@ const App = observer(() => {
       onDrop={(e) => e.preventDefault()}
       onDragOver={(e) => e.preventDefault()}
     >
-      <Layout>
+      <Layout constrain={rootStore.route !== Routes.UPLOAD}>
         <ViewComponent />
       </Layout>
     </div>
