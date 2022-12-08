@@ -12,6 +12,7 @@ const ResultListWrapper = styled.div`
 
   & > *:first-child {
     align-self: stretch;
+    overflow-y: scroll;
   }
 `;
 
@@ -28,49 +29,51 @@ const StyledButton = styled(Button)`
   }
 `;
 
-export const ResultsList = observer(
-  ({
-    fileIds,
-    onSelectItem,
-    className,
-  }: {
-    fileIds: string[];
-    onSelectItem: (id: string) => void;
-    className?: string;
-  }) => {
-    const store = useRootStore();
-    const getFormattedData = () => {
-      return fileIds.map((id, i) => ({
-        rank: i + 1,
-        ...store.metadata[id],
-      }));
-    };
+export const ResultsList = styled(
+  observer(
+    ({
+      fileIds,
+      onSelectItem,
+      className,
+    }: {
+      fileIds: string[];
+      onSelectItem: (id: string) => void;
+      className?: string;
+    }) => {
+      const store = useRootStore();
+      const getFormattedData = () => {
+        return fileIds.map((id, i) => ({
+          rank: i + 1,
+          ...store.metadata[id],
+        }));
+      };
 
-    return (
-      <ResultListWrapper className={className}>
-        <List
-          className="ant-list-item"
-          size="large"
-          bordered
-          dataSource={fileIds}
-          renderItem={(itemId, index) => (
-            <ListItem itemId={itemId} rank={index} onSelect={onSelectItem} />
-          )}
-        />
+      return (
+        <ResultListWrapper className={className}>
+          <List
+            className="ant-list-item"
+            size="large"
+            bordered
+            dataSource={fileIds}
+            renderItem={(itemId, index) => (
+              <ListItem itemId={itemId} rank={index} onSelect={onSelectItem} />
+            )}
+          />
 
-        <StyledButton type="dashed" name="export-csv-btn">
-          <CSVLink
-            filename={"SortResult.csv"}
-            data={getFormattedData()}
-            className="export-csv"
-          >
-            <span>Export to CSV</span>
-          </CSVLink>
-        </StyledButton>
-      </ResultListWrapper>
-    );
-  }
-);
+          <StyledButton type="dashed" name="export-csv-btn">
+            <CSVLink
+              filename={"SortResult.csv"}
+              data={getFormattedData()}
+              className="export-csv"
+            >
+              <span>Export to CSV</span>
+            </CSVLink>
+          </StyledButton>
+        </ResultListWrapper>
+      );
+    }
+  )
+)``;
 
 const ListItem = observer(
   ({

@@ -7,6 +7,7 @@ import { ResultsView, SortView, UploadView } from "./views";
 
 const Layout = styled.div`
   padding: 4rem;
+  height: 100vh;
 
   @media (min-width: 768px) {
     padding: 4rem 8rem;

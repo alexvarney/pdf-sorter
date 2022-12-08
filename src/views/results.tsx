@@ -10,12 +10,21 @@ import { PDFUpload, Routes } from "../utils/types";
 import { useRootStore } from "../utils/use-root-store";
 
 const ContentWrapper = styled.div`
-  flex: 1;
+  flex: 1 1 auto;
   display: grid;
   grid-template-columns: 1fr;
   @media (min-width: 768px) {
     grid-template-columns: 1.5fr 2fr;
   }
+
+  overflow: hidden;
+  justify-items: stretch;
+
+  & > ${ResultsList} {
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
   grid-gap: 2rem;
 `;
 
