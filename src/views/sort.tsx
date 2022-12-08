@@ -21,10 +21,8 @@ const SortWrapper = styled.div`
 
 export const SortView = observer(() => {
   const rootStore = useRootStore();
-  const candidates = Object.keys(rootStore.metadata);
   const comparison = rootStore.currentComparison;
 
-  const [isSorting, setIsSorting] = useState(false);
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(
     null
   );
@@ -41,26 +39,38 @@ export const SortView = observer(() => {
     }
   }, [rootStore, comparison]);
 
-  const pdfA = rootStore.loadedFiles[comparison?.comparison[0] ?? ""];
-  const pdfB = rootStore.loadedFiles[comparison?.comparison[1] ?? ""];
+  const pdfA = comparison
+    ? rootStore.loadedFiles[comparison.comparison[0]]
+    : undefined;
+  const pdfB = comparison
+    ? rootStore.loadedFiles[comparison.comparison[1]]
+    : undefined;
 
   const handleButtonClick = () => {
-    if (isSorting && !!selectedCandidate) {
+    if (!!selectedCandidate) {
       const didSelectA = selectedCandidate === pdfA?.id;
 
       rootStore.provideComparatorResult(didSelectA);
-    } else {
-      rootStore
-        .sortCandidates()
-        .then((res) => rootStore.setFinalSortResult(res));
-      setIsSorting(true);
+      setSelectedCandidate(null);
     }
   };
 
   return (
     <>
       <div>
-        <Header title="Sort Candidates"></Header>
+        <Header
+          title="Sort Candidates"
+          button={
+            <Button
+              danger
+              type="dashed"
+              size="large"
+              onClick={() => rootStore.sortCandidates()}
+            >
+              Restart
+            </Button>
+          }
+        ></Header>
 
         <SortWrapper>
           <CandidateCard
@@ -69,10 +79,10 @@ export const SortView = observer(() => {
             onClick={() => setSelectedCandidate(pdfA?.id ?? null)}
           />
           <Button
-            disabled={isSorting && !comparison}
+            disabled={!comparison || !selectedCandidate}
             onClick={() => handleButtonClick()}
           >
-            {isSorting ? "Next" : "Start"}
+            Next
           </Button>
           <CandidateCard
             data={pdfB}

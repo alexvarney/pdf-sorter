@@ -40,12 +40,10 @@ export const ResultsView = observer(() => {
 
   return (
     <>
-      <div>
-        <Header title="Results" />
-      </div>
+      <Header title="Results" />
       <ContentWrapper>
         <ResultsList fileIds={fileIds} onSelectItem={onSelect} />
-        <CandidateCard data={selectedFile}></CandidateCard>
+        <CandidateCard data={selectedFile} enableLinks></CandidateCard>
       </ContentWrapper>
     </>
   );

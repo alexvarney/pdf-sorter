@@ -11,14 +11,18 @@ import {
 } from "../utils/types";
 export class RootStore {
   _route = Routes.UPLOAD;
+
   _metadata: Record<string, PDFMetadata> = {};
   _loadedFiles: Record<string, PDFUpload["array"]> = {};
   _queuedComparisons: QueuedComparison[] = [];
   _sortResult: string[] | null = null;
 
+  _abortController: AbortController;
+
   constructor() {
     makeAutoObservable(this);
     this.loadMetadata();
+    this._abortController = new window.AbortController();
 
     reaction(
       () => {
@@ -142,16 +146,26 @@ export class RootStore {
     this._queuedComparisons.push(item);
   }
 
+  cleanupSort() {
+    this._abortController.abort();
+    this._queuedComparisons = [];
+  }
+
   sortCandidates = async () => {
+    this.setRoute(Routes.SORT);
+    this.cleanupSort();
+
     const ids = Object.keys(this.metadata);
 
-    console.log("initial", ids);
-
     const comparator = async (a: string, b: string) => {
-      const promise = new Promise<boolean>((resolver) => {
+      const promise = new Promise<boolean>((resolver, reject) => {
         this.appendToQueue({
           comparison: [a, b],
           resolver,
+        });
+
+        this._abortController.signal.addEventListener("abort", () => {
+          reject("Cancelling sort");
         });
       });
 
@@ -160,12 +174,14 @@ export class RootStore {
       return result;
     };
 
-    return await sortAsync(ids, comparator);
+    try {
+      const result = await sortAsync(ids, comparator);
+      this._sortResult = result;
+      this.setRoute(Routes.RESULTS);
+    } catch {
+      console.log("caught cancel sort");
+    }
   };
-
-  setFinalSortResult(ids: string[]) {
-    this._sortResult = ids;
-  }
 
   get sortResult() {
     return this._sortResult;

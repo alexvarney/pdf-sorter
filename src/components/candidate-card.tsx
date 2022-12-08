@@ -39,10 +39,12 @@ export const CandidateCard = ({
   data,
   isSelected,
   onClick,
+  enableLinks,
 }: {
   data?: PDFUpload;
   isSelected?: boolean;
   onClick?: (e?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  enableLinks?: boolean;
 }) => {
   const element = useRef(null);
   const [width] = useSize(element);
@@ -53,7 +55,13 @@ export const CandidateCard = ({
       onClick={(e) => onClick?.(e)}
     >
       <div style={{ width: "100%" }} ref={element}>
-        {width > 0 && <PDFViewer data={data?.array} width={width} />}
+        {width > 0 && (
+          <PDFViewer
+            data={data?.array}
+            width={width}
+            enableLinks={!!enableLinks}
+          />
+        )}
       </div>
       <span>
         {data?.name ?? ""}{" "}
